@@ -1,3 +1,4 @@
+export const revalidate = 0;
 import { client, microcmsConfigured } from "@/libs/client";
 import ClientPage from "./components/ClientPage";
 

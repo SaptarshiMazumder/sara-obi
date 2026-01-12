@@ -1,3 +1,4 @@
+export const revalidate = 0;
 import { client } from "@/libs/client";
 import GalleryClient from "./GalleryClient"; // Import the client component
 
