@@ -5,7 +5,9 @@ import ClientPage from "./components/ClientPage";
 export const revalidate = 0;
 
 export default async function Home() {
-  const data = await client.getObject({ endpoint: "home" }).catch(() => null);
+  const data = client
+    ? await client.getObject({ endpoint: "home" }).catch(() => null)
+    : null;
 
   // 1. Prepare SHOP Data (No Image)
   const shopData = {
