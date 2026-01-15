@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Navbar from "../components/Navbar"; // IMPORT NEW NAVBAR
+import Navbar from "../components/Navbar";
+import { useLanguage } from "../context/LanguageContext"; // 👈 1. Import Global Hook
 
-// --- TYPES ---
 type GalleryItem = {
   id: string;
   title: string;
@@ -15,13 +15,14 @@ type GalleryItem = {
   description: string;
 };
 
-// --- TRANSLATIONS ---
+// --- TRANSLATIONS (Kept exactly as yours) ---
 const UI_LABELS = {
   JP: {
     header: {
       label: "コレクション",
       title: "帯タペストリーアーカイブ",
-      desc: "アンティーク帯をアップサイクルしたアートコレクション。在庫状況の確認や購入は、各作品をクリックしてEtsyページをご覧ください。"
+      desc: "アンティーク帯をアップサイクルしたアートコレクション。各作品はEtsyにてご購入いただけます。",
+      etsy_btn: "SARA OBI Etsyショップを見る" 
     },
     filter: { all: "すべて" },
     grid: { viewEtsy: "Etsyで見る" },
@@ -38,13 +39,23 @@ const UI_LABELS = {
       price_bespoke: "フルオーダー: ¥80,000〜",
       button: "オーダーの相談をする"
     },
-    footer: "© 2026 Sara Obi. Powered by Vercel"
+    footer: {
+      rights: "© 2026 Sara Obi. Powered by Vercel",
+      items: [
+        { label: "オンラインショップ (Etsy)", href: "https://www.etsy.com/jp/shop/SARAOBIPRODUCTS" }, 
+        { label: "About", href: "/about" }, // Fixed link to match pages
+        { label: "ギャラリー予約", href: "/contact" }, // Fixed link to match pages
+        { label: "利用規約", href: "#" },
+        { label: "プライバシーポリシー", href: "#" }
+      ]
+    }
   },
   EN: {
     header: {
       label: "Collection",
       title: "Obi Tapestry Archive",
-      desc: "Explore our collection of upcycled vintage obi art. Click on any piece to verify availability and purchase directly via Etsy."
+      desc: "Explore our collection of upcycled vintage obi art. All items are available for purchase on our Etsy store.",
+      etsy_btn: "Visit SARA OBI on Etsy" 
     },
     filter: { all: "ALL" },
     grid: { viewEtsy: "View on Etsy" },
@@ -61,18 +72,29 @@ const UI_LABELS = {
       price_bespoke: "Full Bespoke: From ¥80,000+",
       button: "INQUIRE ABOUT CUSTOM ORDER"
     },
-    footer: "© 2026 Sara Obi. Powered by Vercel"
+    footer: {
+      rights: "© 2026 Sara Obi. Powered by Vercel",
+      items: [
+        { label: "Online Shop (Etsy)", href: "https://www.etsy.com/jp/shop/SARAOBIPRODUCTS" },
+        { label: "About", href: "/about" }, // Fixed link to match pages
+        { label: "Gallery Reservation", href: "/contact" }, // Fixed link to match pages
+        { label: "Terms of Service", href: "#" },
+        { label: "Privacy Policy", href: "#" }
+      ]
+    }
   }
 };
 
 export default function GalleryClient({ items }: { items: GalleryItem[] }) {
-  const [lang, setLang] = useState<"JP" | "EN">("EN");
+  // 👇 2. REPLACED local useState with Global Hook
+  // const [lang, setLang] = useState<"JP" | "EN">("EN");  <-- DELETED THIS
+  const { lang, toggleLang } = useLanguage();           // <-- ADDED THIS
+
   const [filter, setFilter] = useState("ALL");
   const ui = UI_LABELS[lang];
 
-  const toggleLang = () => setLang((prev) => (prev === "EN" ? "JP" : "EN"));
+  // const toggleLang = () => setLang((prev) => (prev === "EN" ? "JP" : "EN")); <-- DELETED THIS (handled by hook)
 
-  // Filter Logic
   const allCategories = ["ALL", ...Array.from(new Set(items.flatMap(i => i.category || [])))];
   const filteredItems = filter === "ALL" || filter === "すべて"
     ? items 
@@ -81,24 +103,31 @@ export default function GalleryClient({ items }: { items: GalleryItem[] }) {
   return (
     <div className={`min-h-screen bg-[#F9F8F4] font-serif text-[#2C2C2C] selection:bg-[#C5A059] selection:text-white ${lang === "JP" ? "font-sans-jp" : ""}`}>
       
-      {/* --- NEW NAVBAR COMPONENT --- */}
       <Navbar lang={lang} toggleLang={toggleLang} />
 
       {/* --- HEADER --- */}
       <header className="pt-40 pb-20 px-6 text-center max-w-4xl mx-auto animate-fade-in-up">
-        <span className="block text-[10px] font-sans tracking-[0.3em] text-[#C5A059] mb-6 uppercase">
+        <span className="block text-[10px] font-sans tracking-[0.3em] text-[#C5A059] mb-6 uppercase font-bold">
           {ui.header.label}
         </span>
         <h1 className="text-4xl md:text-5xl font-light mb-8">{ui.header.title}</h1>
-        <p className="text-sm md:text-base font-sans text-stone-500 leading-7 max-w-xl mx-auto">
+        <p className="text-sm md:text-base font-sans text-stone-500 leading-7 max-w-xl mx-auto mb-10">
           {ui.header.desc}
         </p>
+
+        {/* ETSY BUTTON */}
+        <a 
+          href="https://www.etsy.com/jp/shop/SARAOBIPRODUCTS" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="inline-block bg-[#F1641E] text-white px-8 py-3 text-xs font-sans tracking-widest hover:bg-[#d55517] transition-colors rounded-sm shadow-sm"
+        >
+          {ui.header.etsy_btn} →
+        </a>
       </header>
 
       {/* --- GRID --- */}
       <main className="px-4 md:px-8 pb-32 max-w-7xl mx-auto border-b border-stone-200">
-        
-        {/* Filter Buttons */}
         <div className="flex flex-wrap justify-center gap-4 mb-16">
             {allCategories.map((cat) => (
             <button
@@ -115,24 +144,30 @@ export default function GalleryClient({ items }: { items: GalleryItem[] }) {
             ))}
         </div>
 
-        {/* Items */}
+        {/* 👇 IF EMPTY, SHOW MESSAGE */}
         {filteredItems.length === 0 ? (
-           <p className="text-center text-stone-400">Loading...</p>
+           <div className="text-center py-20 bg-stone-100 text-stone-400 font-sans tracking-widest">
+             <p>No items found.</p>
+             <p className="text-xs mt-2 opacity-50">(Please add content to MicroCMS 'gallery' API)</p>
+           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
             {filteredItems.map((item) => (
               <div key={item.id} className="group flex flex-col items-start animate-fade-in">
-                {/* IMAGE */}
-                <div className="relative w-full aspect-[3/4] overflow-hidden bg-stone-200 mb-6 cursor-pointer">
+                <div className="relative w-full aspect-[3/4] overflow-hidden bg-stone-200 mb-6 cursor-pointer shadow-sm">
                   {item.etsy_link ? (
                     <a href={item.etsy_link} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
-                      <img 
-                        src={item.image?.url} 
-                        alt={item.title} 
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
+                      {item.image?.url ? (
+                        <img 
+                          src={item.image.url} 
+                          alt={item.title} 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-stone-400 text-xs">NO IMAGE</div>
+                      )}
                       <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-                        <span className="bg-white text-black px-6 py-2 text-[10px] tracking-widest uppercase">
+                        <span className="bg-white text-black px-6 py-2 text-[10px] tracking-widest uppercase shadow-md">
                           {ui.grid.viewEtsy}
                         </span>
                       </div>
@@ -141,12 +176,10 @@ export default function GalleryClient({ items }: { items: GalleryItem[] }) {
                     <img src={item.image?.url} alt={item.title} className="w-full h-full object-cover" />
                   )}
                 </div>
-                {/* INFO */}
                 <div className="w-full flex justify-between items-baseline mb-2">
-                  <h3 className="text-xl font-light">{item.title}</h3>
-                  <span className="text-sm font-sans text-[#C5A059]">{item.price}</span>
+                  <h3 className="text-xl font-light font-serif">{item.title}</h3>
+                  <span className="text-sm font-sans text-[#C5A059] font-medium">{item.price}</span>
                 </div>
-                {/* CATEGORIES */}
                 <div className="flex gap-2 mb-3">
                   {item.category && item.category.map((cat) => (
                       <span key={cat} className="text-[10px] font-sans tracking-wide uppercase border border-stone-300 px-2 py-1 text-stone-500">
@@ -160,46 +193,50 @@ export default function GalleryClient({ items }: { items: GalleryItem[] }) {
         )}
       </main>
 
-      {/* --- CUSTOM ORDER SECTION --- */}
+      {/* --- CUSTOM ORDER --- */}
       <section className="py-24 px-6 bg-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-light mb-12">{ui.custom.title}</h2>
-          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16 text-left md:text-center">
             <div>
-              <span className="block text-4xl text-[#C5A059] opacity-30 mb-4">01</span>
+              <span className="block text-4xl text-[#C5A059] opacity-30 mb-4 font-serif">01</span>
               <h3 className="text-lg font-medium mb-3">{ui.custom.step1_title}</h3>
               <p className="text-xs font-sans text-stone-500 leading-6">{ui.custom.step1_desc}</p>
             </div>
             <div>
-              <span className="block text-4xl text-[#C5A059] opacity-30 mb-4">02</span>
+              <span className="block text-4xl text-[#C5A059] opacity-30 mb-4 font-serif">02</span>
               <h3 className="text-lg font-medium mb-3">{ui.custom.step2_title}</h3>
               <p className="text-xs font-sans text-stone-500 leading-6">{ui.custom.step2_desc}</p>
             </div>
             <div>
-              <span className="block text-4xl text-[#C5A059] opacity-30 mb-4">03</span>
+              <span className="block text-4xl text-[#C5A059] opacity-30 mb-4 font-serif">03</span>
               <h3 className="text-lg font-medium mb-3">{ui.custom.step3_title}</h3>
               <p className="text-xs font-sans text-stone-500 leading-6">{ui.custom.step3_desc}</p>
             </div>
           </div>
-
-          <div className="bg-[#F9F8F4] p-8 md:p-12 inline-block w-full max-w-2xl">
-            <h4 className="text-sm font-sans tracking-widest uppercase text-[#C5A059] mb-4">{ui.custom.price_title}</h4>
-            <p className="text-stone-600 mb-8 font-light text-lg">
+          <div className="bg-[#F9F8F4] p-8 md:p-12 inline-block w-full max-w-2xl border border-stone-100">
+            <h4 className="text-sm font-sans tracking-widest uppercase text-[#C5A059] mb-4 font-bold">{ui.custom.price_title}</h4>
+            <p className="text-stone-600 mb-8 font-light text-lg leading-relaxed">
               {ui.custom.price_std} <br/>
               {ui.custom.price_bespoke}
             </p>
-            {/* Navigates back to home contact form */}
-            <Link href="/#contact" className="bg-black text-white px-8 py-3 text-xs font-sans tracking-widest hover:bg-[#C5A059] transition">
+            <Link href="/contact" className="bg-black text-white px-8 py-3 text-xs font-sans tracking-widest hover:bg-[#C5A059] transition inline-block">
               {ui.custom.button}
             </Link>
           </div>
         </div>
       </section>
 
-      {/* --- FOOTER --- */}
-      <footer id="contact" className="bg-black text-white py-12 px-8 text-center text-[10px] font-sans tracking-widest uppercase">
-        <p>{ui.footer}</p>
+      {/* FOOTER */}
+      <footer id="contact" className="bg-black text-white py-12 px-8 text-center text-[10px] font-sans tracking-widest uppercase border-t border-stone-900">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex gap-6 flex-wrap justify-center">
+            {ui.footer.items.map((item, i) => (
+              <a key={i} href={item.href} className="hover:text-[#C5A059] transition">{item.label}</a>
+            ))}
+          </div>
+          <p className="mt-4 opacity-50">{ui.footer.rights}</p>
+        </div>
       </footer>
     </div>
   );

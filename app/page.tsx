@@ -1,88 +1,53 @@
-export const revalidate = 0;
-import { client, microcmsConfigured } from "@/libs/client";
+import { client } from "@/libs/client";
 import ClientPage from "./components/ClientPage";
 
-// --- TYPES ---
-type HomeContent = {
-  hero_image?: { url: string };
-  // Concept
-  concept_title_en?: string; concept_body_en?: string;
-  concept_title_jp?: string; concept_body_jp?: string;
-  // Banner 1
-  banner_image?: { url: string };
-  banner_title_en?: string; banner_body_en?: string;
-  banner_title_jp?: string; banner_body_jp?: string;
-  // Banner 2
-  product_image?: { url: string };
-  product_title_en?: string; product_body_en?: string;
-  product_title_jp?: string; product_body_jp?: string;
-  // Banner 3
-  reserve_image?: { url: string };
-  reserve_title_en?: string; reserve_body_en?: string;
-  reserve_title_jp?: string; reserve_body_jp?: string;
-  // Newsletter (NEW)
-  news_title_en?: string; news_body_en?: string;
-  news_title_jp?: string; news_body_jp?: string;
-};
+// Force dynamic update
+export const revalidate = 0;
 
 export default async function Home() {
-  if (!microcmsConfigured || !client) return <div>Connecting...</div>;
+  const data = await client.getObject({ endpoint: "home" }).catch(() => null);
 
-  const homeData = await client.get<HomeContent>({ endpoint: "home" }).catch(() => null);
+  // 1. Prepare SHOP Data (No Image)
+  const shopData = {
+    title_en: data?.shop_title_en || "Online Shop",
+    body_en: data?.shop_body_en || "Purchase our collection via Etsy.\nPrice Range: $200 - $500",
+    title_jp: data?.shop_title_jp || "オンラインショップ",
+    body_jp: data?.shop_body_jp || "作品はEtsyにてご購入いただけます。\n価格帯: 30,000円〜",
+  };
 
-  // 1. Concept Data
+  // 2. Prepare Other Data (Keep existing logic)
+  const heroImageUrl = data?.hero_image?.url || "";
+  
   const conceptText = {
-    title_en: homeData?.concept_title_en || "Default Concept Title",
-    body_en: homeData?.concept_body_en || "Default Concept Body",
-    title_jp: homeData?.concept_title_jp || "コンセプト",
-    body_jp: homeData?.concept_body_jp || "コンセプトの本文",
+    title_en: data?.concept_title_en || "",
+    body_en: data?.concept_body_en || "",
+    title_jp: data?.concept_title_jp || "",
+    body_jp: data?.concept_body_jp || "",
   };
 
-  // 2. Banner Data
-  const bannerData = {
-    imageUrl: homeData?.banner_image?.url || "/hero.jpg",
-    title_en: homeData?.banner_title_en || "Fabric Collection",
-    body_en: homeData?.banner_body_en || "Description here.",
-    title_jp: homeData?.banner_title_jp || "ファブリック",
-    body_jp: homeData?.banner_body_jp || "説明文",
+  const galleryData = {
+    imageUrl: data?.gallery_image?.url || "", // Renamed from bannerData for clarity if you want, or keep variable name
+    title_en: data?.gallery_title_en || "",
+    body_en: data?.gallery_body_en || "",
+    title_jp: data?.gallery_title_jp || "",
+    body_jp: data?.gallery_body_jp || "",
   };
 
-  // 3. Product Data
-  const productData = {
-    imageUrl: homeData?.product_image?.url || "/hero.jpg",
-    title_en: homeData?.product_title_en || "Hoshi - Blazer",
-    body_en: homeData?.product_body_en || "Signature piece.",
-    title_jp: homeData?.product_title_jp || "星 - ブレザー",
-    body_jp: homeData?.product_body_jp || "シグネチャーアイテム。",
+  const contactData = {
+    imageUrl: data?.contact_image?.url || "", // Renamed from reserveData
+    title_en: data?.contact_title_en || "",
+    body_en: data?.contact_body_en || "",
+    title_jp: data?.contact_title_jp || "",
+    body_jp: data?.contact_body_jp || "",
   };
-
-  // 4. Reservation Data
-  const reserveData = {
-    imageUrl: homeData?.reserve_image?.url || "/hero.jpg",
-    title_en: homeData?.reserve_title_en || "Gallery Reservation",
-    body_en: homeData?.reserve_body_en || "Book your visit.",
-    title_jp: homeData?.reserve_title_jp || "ギャラリー予約",
-    body_jp: homeData?.reserve_body_jp || "ご来店予約はこちら。",
-  };
-
-  // 5. Newsletter Data (NEW)
-  const newsData = {
-    title_en: homeData?.news_title_en || "Newsletters",
-    body_en: homeData?.news_body_en || "Sign up for the latest news.",
-    title_jp: homeData?.news_title_jp || "ニュースレター",
-    body_jp: homeData?.news_body_jp || "最新情報をお届けします。",
-  };
-
-  const heroImageUrl = homeData?.hero_image?.url || '/hero.jpg';
 
   return (
     <ClientPage 
-      heroImageUrl={heroImageUrl} 
-      conceptText={conceptText} 
-      bannerData={bannerData}
-      productData={productData}
-      reserveData={reserveData}
-      newsData={newsData}
+      heroImageUrl={heroImageUrl}
+      conceptText={conceptText}
+      galleryData={galleryData}
+      shopData={shopData}       // 👈 Passed new clear Shop data
+      contactData={contactData} 
     />
   );
 }
