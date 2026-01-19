@@ -11,10 +11,18 @@ export default async function Home() {
 
   // 1. Prepare SHOP Data (No Image)
   const shopData = {
-    title_en: data?.shop_title_en || "Online Shop",
-    body_en: data?.shop_body_en || "Purchase our collection via Etsy.\nPrice Range: $200 - $500",
-    title_jp: data?.shop_title_jp || "オンラインショップ",
-    body_jp: data?.shop_body_jp || "作品はEtsyにてご購入いただけます。\n価格帯: 30,000円〜",
+    // Existing MicroCMS fields (from your schema)
+    title_en: data?.shop_title_en || "",
+    body_en: data?.shop_body_en || "",
+    title_jp: data?.shop_title_jp || "",
+    body_jp: data?.shop_body_jp || "",
+
+    // Optional fields (only used if you add them later)
+    label_en: data?.shop_label_en,
+    label_jp: data?.shop_label_jp,
+    button_en: data?.shop_button_en,
+    button_jp: data?.shop_button_jp,
+    url: data?.shop_url,
   };
 
   // 2. Prepare Other Data (Keep existing logic)
