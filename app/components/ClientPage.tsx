@@ -102,7 +102,6 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
   const baseLabelStyle = "block text-xs md:text-sm font-sans tracking-[0.3em] mb-6 uppercase font-bold";
   const goldenLabelStyle = `${baseLabelStyle} text-[#C5A059]`;
   const whiteLabelStyle = `${baseLabelStyle} text-white`;
-  const titleStyle = "text-4xl md:text-6xl font-serif mb-8 leading-tight";
   const bodyStyle = "text-sm md:text-lg font-sans font-medium leading-relaxed mb-10 whitespace-pre-wrap";
   const strongShadow = { textShadow: "0 2px 10px rgba(0,0,0,0.8)" };
 
@@ -139,7 +138,7 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
         </div>
         <div className="relative z-10 max-w-4xl mx-auto">
           {galleryLabel ? (
-            <span className={goldenLabelStyle} style={strongShadow}>
+            <span className={whiteLabelStyle} style={strongShadow}>
               {galleryLabel}
             </span>
           ) : null}
@@ -176,7 +175,7 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
         </div>
         <div className="relative z-10 max-w-4xl mx-auto">
           {contactLabel ? (
-            <span className={goldenLabelStyle} style={strongShadow}>
+            <span className={whiteLabelStyle} style={strongShadow}>
               {contactLabel}
             </span>
           ) : null}
@@ -194,6 +193,28 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-16 md:gap-0">
           <div className="flex flex-col items-start gap-6">
             <span className="text-3xl font-serif text-[#C5A059] tracking-wider">Sara Obi</span>
+            <a
+              href="https://www.instagram.com/sara_obi_/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Sara Obi on Instagram"
+              className="text-white/90 hover:text-[#C5A059] transition-colors"
+            >
+              <svg
+                className="w-10 h-10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="5" />
+                <path d="M16 11.37a4 4 0 11-7.41 2.18 4 4 0 017.41-2.18z" />
+                <path d="M17.5 6.5h.01" />
+              </svg>
+            </a>
           </div>
           <div className="flex flex-col items-start md:items-end space-y-4 text-sm font-sans tracking-wide">
             {ui.footer.items.map((item, index) => (
