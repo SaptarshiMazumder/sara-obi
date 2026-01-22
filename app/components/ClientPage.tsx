@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react"; // Removed useState import
-import Link from "next/link"; 
+import Link from "next/link";
+import Image from "next/image";
 import Navbar from "./Navbar";
 import { useLanguage } from "../context/LanguageContext"; // 👈 Import Global Hook
 
@@ -9,11 +10,11 @@ import { useLanguage } from "../context/LanguageContext"; // 👈 Import Global 
 const UI_LABELS = {
   JP: {
     hero: { subtitle: "東京 • アップサイクル • アート", scroll: "スクロール" },
-    concept: { label: "コンセプト", button: "ストーリーを読む" }, 
-    gallery: { label: "コレクション", button: "ギャラリーを見る" }, 
-    contact: { label: "カスタムオーダー", button: "オーダーの相談をする" }, 
-    footer: { 
-      rights: "© 2026 Sara Obi. Powered by Vercel", 
+    concept: { label: "コンセプト", button: "ストーリーを読む" },
+    gallery: { label: "コレクション", button: "ギャラリーを見る" },
+    contact: { label: "カスタムオーダー", button: "オーダーの相談をする" },
+    footer: {
+      rights: "© 2026 Sara Obi. Powered by Vercel",
       items: [
         { label: "オンラインショップ (Etsy)", href: "https://www.etsy.com/jp/shop/SARAOBIPRODUCTS" },
         { label: "SARA OBIについて", href: "/about" },
@@ -26,10 +27,10 @@ const UI_LABELS = {
   },
   EN: {
     hero: { subtitle: "Tokyo • Upcycled • Art", scroll: "Scroll" },
-    concept: { label: "ABOUT", button: "Read Our Story" }, 
-    gallery: { label: "COLLECTION", button: "View Collection" }, 
-    contact: { label: "CUSTOM ORDER", button: "Inquire / Custom Order" }, 
-    footer: { 
+    concept: { label: "ABOUT", button: "Read Our Story" },
+    gallery: { label: "COLLECTION", button: "View Collection" },
+    contact: { label: "CUSTOM ORDER", button: "Inquire / Custom Order" },
+    footer: {
       rights: "© 2026 Sara Obi. Powered by Vercel",
       items: [
         { label: "Online Shop (Etsy)", href: "https://www.etsy.com/jp/shop/SARAOBIPRODUCTS" },
@@ -74,7 +75,7 @@ type Props = {
 export default function ClientPage({ heroImageUrl, conceptText, galleryData, shopData, contactData }: Props) {
   // 👇 REPLACED useState with useLanguage()
   const { lang, toggleLang } = useLanguage();
-  
+
   const ui = UI_LABELS[lang];
   const SHOP_FALLBACK_URL = "https://www.etsy.com/jp/shop/SARAOBIPRODUCTS";
 
@@ -105,14 +106,41 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
   const bodyStyle = "text-sm md:text-lg font-sans font-medium leading-relaxed mb-10 whitespace-pre-wrap";
   const strongShadow = { textShadow: "0 2px 10px rgba(0,0,0,0.8)" };
 
+  const optimizeMicrocmsImage = (url: string, width: number) => {
+    try {
+      const u = new URL(url);
+      // Only mutate MicroCMS asset URLs; otherwise return as-is.
+      if (u.hostname !== "images.microcms-assets.io") return url;
+
+      // microCMS image API supports `w` + `fm` (format). Using webp reduces payload significantly.
+      u.searchParams.set("w", String(width));
+      u.searchParams.set("fm", "webp");
+      // Slightly higher quality to preserve sharpness on initial load.
+      u.searchParams.set("q", "92");
+      return u.toString();
+    } catch {
+      return url;
+    }
+  };
+
   return (
     <div className={`min-h-screen bg-[#F9F8F4] font-serif text-[#2C2C2C] selection:bg-[#C5A059] selection:text-white ${lang === "JP" ? "font-sans-jp" : ""}`}>
-      
+
       <Navbar lang={lang} toggleLang={toggleLang} />
 
       {/* --- 1. HERO --- */}
       <header className="relative h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
-        <div className="absolute inset-0 z-0" style={{ backgroundImage: `url('${heroImageUrl}')`, backgroundSize: "cover", backgroundPosition: "center" }}>
+        <div className="absolute inset-0 z-0 bg-black/10">
+          {heroImageUrl ? (
+            <Image
+              src={optimizeMicrocmsImage(heroImageUrl, 3200)}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+          ) : null}
           <div className="absolute inset-0 bg-black/10" />
         </div>
         <div className="relative z-10 text-white animate-fade-in-up">
@@ -134,7 +162,16 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
 
       {/* --- 3. GALLERY --- */}
       <section className="relative py-48 px-4 text-center text-white">
-        <div className="absolute inset-0 z-0" style={{ backgroundImage: `url('${galleryData.imageUrl}')`, backgroundSize: "cover", backgroundPosition: "center" }}>
+        <div className="absolute inset-0 z-0 bg-black/10">
+          {galleryData.imageUrl ? (
+            <Image
+              src={optimizeMicrocmsImage(galleryData.imageUrl, 2600)}
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover"
+            />
+          ) : null}
         </div>
         <div className="relative z-10 max-w-4xl mx-auto">
           {galleryLabel ? (
@@ -158,9 +195,9 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
           <p className={`${bodyStyle} text-stone-600`}>
             {lang === "EN" ? shopData.body_en : shopData.body_jp}
           </p>
-          <a 
+          <a
             href={shopUrl}
-            target="_blank" 
+            target="_blank"
             rel="noopener noreferrer"
             className="bg-[#F1641E] text-white px-10 py-4 text-xs font-sans tracking-widest hover:bg-[#d55517] transition inline-block rounded-sm shadow-sm"
           >
@@ -171,7 +208,16 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
 
       {/* --- 5. CONTACT --- */}
       <section className="relative py-48 px-4 text-center text-white">
-        <div className="absolute inset-0 z-0" style={{ backgroundImage: `url('${contactData.imageUrl}')`, backgroundSize: "cover", backgroundPosition: "center" }}>
+        <div className="absolute inset-0 z-0 bg-black/10">
+          {contactData.imageUrl ? (
+            <Image
+              src={optimizeMicrocmsImage(contactData.imageUrl, 2600)}
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover"
+            />
+          ) : null}
         </div>
         <div className="relative z-10 max-w-4xl mx-auto">
           {contactLabel ? (
@@ -218,8 +264,8 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
           </div>
           <div className="flex flex-col items-start md:items-end space-y-4 text-sm font-sans tracking-wide">
             {ui.footer.items.map((item, index) => (
-              <a 
-                key={index} 
+              <a
+                key={index}
                 href={item.href}
                 target={item.href.startsWith("http") ? "_blank" : "_self"}
                 rel={item.href.startsWith("http") ? "noopener noreferrer" : ""}
@@ -231,7 +277,7 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
           </div>
         </div>
         <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-stone-800 text-[10px] text-stone-500 font-sans tracking-widest uppercase text-center md:text-left">
-            <p>{ui.footer.rights}</p>
+          <p>{ui.footer.rights}</p>
         </div>
       </footer>
     </div>

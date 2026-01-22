@@ -8,13 +8,13 @@ import { useLanguage } from "../context/LanguageContext"; // 👈 Import Global 
 const CONTENT = { 
     // Paste your existing CONTENT object here (it's long so I won't repeat it, but keep it exactly as it was)
     JP: {
-    title: "お問い合わせ・予約",
-    desc: "カスタムオーダーのご相談や、ギャラリーへの来訪予約はこちらからお願いいたします。",
+    title: "お問い合わせ",
+    desc: "カスタムオーダーのご相談や、一般のお問い合わせはこちらからお願いいたします。",
     form: {
       name: "お名前",
       email: "メールアドレス",
       type: "お問い合わせ内容",
-      types: ["カスタムオーダーについて", "ギャラリー来訪予約", "その他"],
+      types: ["カスタムオーダーについて", "一般お問い合わせ", "その他"],
       message: "メッセージ",
       submit: "送信する",
       sending: "送信中...",
@@ -23,13 +23,13 @@ const CONTENT = {
     footer: "© 2026 Sara Obi. Powered by Vercel"
   },
   EN: {
-    title: "Contact & Reservation",
-    desc: "Please use this form for custom order inquiries or to book a visit to our gallery.",
+    title: "Contact",
+    desc: "Please use this form for custom order inquiries or general enquiries.",
     form: {
       name: "Name",
       email: "Email Address",
       type: "Inquiry Type",
-      types: ["Custom Order Inquiry", "Gallery Reservation", "Other"],
+      types: ["Custom Order Inquiry", "General Enquiry", "Other"],
       message: "Message",
       submit: "Send Message",
       sending: "Sending...",
