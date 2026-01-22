@@ -59,7 +59,7 @@ export default function Navbar({ lang, toggleLang }: Props) {
         <Link 
           href="/" 
           onClick={closeMenu}
-          className="text-2xl font-serif tracking-widest z-50 
+          className="text-2xl font-serif tracking-widest z-50 text-[#C5A059]
                      absolute left-1/2 -translate-x-1/2 
                      md:static md:translate-x-0"
         >

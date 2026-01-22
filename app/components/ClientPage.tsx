@@ -115,8 +115,7 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
       // microCMS image API supports `w` + `fm` (format). Using webp reduces payload significantly.
       u.searchParams.set("w", String(width));
       u.searchParams.set("fm", "webp");
-      // Slightly higher quality to preserve sharpness on initial load.
-      u.searchParams.set("q", "92");
+      u.searchParams.set("q", "85");
       return u.toString();
     } catch {
       return url;
@@ -133,7 +132,7 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
         <div className="absolute inset-0 z-0 bg-black/10">
           {heroImageUrl ? (
             <Image
-              src={optimizeMicrocmsImage(heroImageUrl, 3200)}
+              src={optimizeMicrocmsImage(heroImageUrl, 2200)}
               alt=""
               fill
               priority
@@ -165,7 +164,7 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
         <div className="absolute inset-0 z-0 bg-black/10">
           {galleryData.imageUrl ? (
             <Image
-              src={optimizeMicrocmsImage(galleryData.imageUrl, 2600)}
+              src={optimizeMicrocmsImage(galleryData.imageUrl, 2000)}
               alt=""
               fill
               sizes="100vw"
@@ -211,7 +210,7 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
         <div className="absolute inset-0 z-0 bg-black/10">
           {contactData.imageUrl ? (
             <Image
-              src={optimizeMicrocmsImage(contactData.imageUrl, 2600)}
+              src={optimizeMicrocmsImage(contactData.imageUrl, 2000)}
               alt=""
               fill
               sizes="100vw"
