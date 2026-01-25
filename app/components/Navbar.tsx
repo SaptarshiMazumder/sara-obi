@@ -35,10 +35,10 @@ export default function Navbar({ lang, toggleLang }: Props) {
     <>
       {/* 👇 Added font-sans-jp conditional class so JP font looks good */}
       <nav className={`fixed top-0 w-full z-50 bg-black text-white h-[80px] px-6 flex items-center justify-between ${lang === "JP" ? "font-sans-jp" : ""}`}>
-        
+
         {/* --- 1. HAMBURGER (Mobile Only - LEFT) --- */}
-        <button 
-          onClick={() => setIsOpen(!isOpen)} 
+        <button
+          onClick={() => setIsOpen(!isOpen)}
           className="md:hidden z-50 p-2 -ml-2 focus:outline-none"
           aria-label="Toggle Menu"
         >
@@ -56,8 +56,8 @@ export default function Navbar({ lang, toggleLang }: Props) {
         </button>
 
         {/* --- 2. LOGO (Centered on Mobile, Left on Desktop) --- */}
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           onClick={closeMenu}
           className="text-2xl font-serif tracking-widest z-50 text-[#C5A059]
                      absolute left-1/2 -translate-x-1/2 
@@ -67,9 +67,9 @@ export default function Navbar({ lang, toggleLang }: Props) {
         </Link>
 
         {/* --- 3. SHOP ICON (Mobile Only - RIGHT) --- */}
-        <a 
+        <a
           href={etsyLink}
-          target="_blank" 
+          target="_blank"
           rel="noopener noreferrer"
           className="md:hidden z-50 p-2 -mr-2"
           aria-label="Shop on Etsy"
@@ -94,7 +94,7 @@ export default function Navbar({ lang, toggleLang }: Props) {
           <Link href="/contact" className="hover:text-[#C5A059] transition-colors">
             {t.contact}
           </Link>
-          
+
           <button onClick={toggleLang} className="border border-white/30 px-3 py-1 hover:bg-white hover:text-black transition">
             {lang === "EN" ? "JP" : "EN"}
           </button>
@@ -102,10 +102,9 @@ export default function Navbar({ lang, toggleLang }: Props) {
       </nav>
 
       {/* --- 5. MOBILE MENU OVERLAY --- */}
-      <div 
-        className={`fixed inset-0 bg-black z-40 flex flex-col items-center justify-center transition-opacity duration-300 ease-in-out ${
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
+      <div
+        className={`fixed inset-0 bg-black z-40 flex flex-col items-center justify-center transition-opacity duration-300 ease-in-out ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
       >
         {/* 👇 Added font-sans-jp here too */}
         <div className={`flex flex-col items-center gap-10 text-xl font-serif text-white ${lang === "JP" ? "font-sans-jp" : ""}`}>
@@ -121,7 +120,7 @@ export default function Navbar({ lang, toggleLang }: Props) {
           <Link href="/contact" onClick={closeMenu} className="hover:text-[#C5A059] transition-colors">
             {t.contact}
           </Link>
-          
+
           <div className="w-10 h-px bg-stone-700 my-4"></div>
 
           <button onClick={() => { toggleLang(); closeMenu(); }} className="text-sm font-sans tracking-widest border border-stone-600 px-6 py-2 rounded-full hover:bg-white hover:text-black transition">

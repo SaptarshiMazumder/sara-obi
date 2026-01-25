@@ -27,7 +27,7 @@ export default async function Home() {
 
   // 2. Prepare Other Data (Keep existing logic)
   const heroImageUrl = data?.hero_image?.url || "";
-  
+
   const conceptText = {
     title_en: data?.concept_title_en || "",
     body_en: data?.concept_body_en || "",
@@ -52,12 +52,12 @@ export default async function Home() {
   };
 
   return (
-    <ClientPage 
+    <ClientPage
       heroImageUrl={heroImageUrl}
       conceptText={conceptText}
       galleryData={galleryData}
       shopData={shopData}       // 👈 Passed new clear Shop data
-      contactData={contactData} 
+      contactData={contactData}
     />
   );
 }
