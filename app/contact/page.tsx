@@ -5,9 +5,9 @@ import Navbar from "../components/Navbar";
 import { useLanguage } from "../context/LanguageContext"; // 👈 Import Global Hook
 
 // ... (Keep your existing CONTENT object here) ...
-const CONTENT = { 
-    // Paste your existing CONTENT object here (it's long so I won't repeat it, but keep it exactly as it was)
-    JP: {
+const CONTENT = {
+  // Paste your existing CONTENT object here (it's long so I won't repeat it, but keep it exactly as it was)
+  JP: {
     title: "お問い合わせ",
     desc: "カスタムオーダーのご相談や、一般のお問い合わせはこちらからお願いいたします。",
     form: {
@@ -41,21 +41,21 @@ const CONTENT = {
 
 export default function ContactPage() {
   // 👇 REPLACED local useState with global useLanguage
-  const { lang, toggleLang } = useLanguage(); 
-  
+  const { lang, toggleLang } = useLanguage();
+
   const [status, setStatus] = useState<"IDLE" | "SENDING" | "SUCCESS">("IDLE");
-  
+
   const t = CONTENT[lang];
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("SENDING");
-    
+
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
 
     try {
-      const response = await fetch("https://formspree.io/f/xykeopzb", {
+      const response = await fetch("https://formspree.io/f/xaqjrazn", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -90,8 +90,8 @@ export default function ContactPage() {
           <div className="bg-white p-12 text-center border border-stone-200 animate-fade-in">
             <span className="text-4xl text-[#C5A059] block mb-4">✓</span>
             <p className="text-sm font-sans tracking-wide">{t.form.success}</p>
-            <button 
-              onClick={() => setStatus("IDLE")} 
+            <button
+              onClick={() => setStatus("IDLE")}
               className="mt-8 text-xs text-stone-400 underline hover:text-stone-600"
             >
               Send another message
@@ -99,7 +99,7 @@ export default function ContactPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 md:p-12 border border-stone-100 shadow-sm animate-fade-in-up">
-            
+
             {/* NAME */}
             <div>
               <label className="block text-xs font-sans tracking-widest uppercase text-stone-500 mb-2">{t.form.name}</label>
@@ -128,8 +128,8 @@ export default function ContactPage() {
               <textarea name="message" rows={4} required className="w-full border border-stone-300 p-3 outline-none focus:border-[#C5A059] transition-colors bg-transparent text-sm" />
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={status === "SENDING"}
               className="w-full bg-black text-white py-4 text-xs font-sans tracking-widest uppercase hover:bg-[#C5A059] transition-colors disabled:opacity-50"
             >
