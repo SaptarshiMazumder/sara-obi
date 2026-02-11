@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import React, { useState } from "react";
 
 type Props = {
@@ -59,11 +60,19 @@ export default function Navbar({ lang, toggleLang }: Props) {
         <Link
           href="/"
           onClick={closeMenu}
-          className="text-2xl font-serif tracking-widest z-50 text-[#C5A059]
+          className="z-50 flex items-center
                      absolute left-1/2 -translate-x-1/2 
-                     md:static md:translate-x-0"
+                     md:static md:translate-x-0 h-full w-auto overflow-hidden"
+          aria-label="SARA OBI Home"
         >
-          SARA OBI
+          <Image
+            src="/logo.png"
+            alt="SARA OBI"
+            width={160}
+            height={48}
+            className="h-[130px] w-auto max-h-none object-contain object-left"
+            priority
+          />
         </Link>
 
         {/* --- 3. SHOP ICON (Mobile Only - RIGHT) --- */}

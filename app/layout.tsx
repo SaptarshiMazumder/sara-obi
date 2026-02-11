@@ -9,6 +9,10 @@ const noto = Noto_Serif_JP({ subsets: ["latin"], weight: ["200", "400", "700"], 
 export const metadata: Metadata = {
   title: "SARA OBI",
   description: "Upcycled Obi Art from Tokyo",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({
