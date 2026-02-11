@@ -3,6 +3,7 @@
 import React from "react"; // Removed useState import
 import Link from "next/link";
 import Image from "next/image";
+import heroLogo from "../logo.png";
 import Navbar from "./Navbar";
 import { useLanguage } from "../context/LanguageContext"; // 👈 Import Global Hook
 
@@ -143,8 +144,12 @@ export default function ClientPage({ heroImageUrl, conceptText, galleryData, sho
           <div className="absolute inset-0 bg-black/10" />
         </div>
         <div className="relative z-10 text-white animate-fade-in-up">
-          <h1 className="text-5xl md:text-8xl font-light tracking-widest mb-6" style={strongShadow}>SARA OBI</h1>
-          <p className="text-xs md:text-sm font-sans tracking-[0.3em] uppercase opacity-90" style={strongShadow}>{ui.hero.subtitle}</p>
+          <Image
+            src={heroLogo}
+            alt="SARA OBI"
+            priority
+            className="w-[min(72vw,760px)] h-auto mb-6 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]"
+          />
         </div>
       </header>
 

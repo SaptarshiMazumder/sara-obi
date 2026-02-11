@@ -10,8 +10,9 @@ export const metadata: Metadata = {
   title: "SARA OBI",
   description: "Upcycled Obi Art from Tokyo",
   icons: {
-    icon: "/icon.png",
-    apple: "/icon.png",
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
   },
 };
 
