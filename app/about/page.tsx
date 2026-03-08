@@ -56,22 +56,51 @@ she breathes new life into vintage Obis as contemporary art.`,
 async function getAboutContent(): Promise<AboutPageContent> {
   if (!client) return fallbackContent;
 
-  const data = await client.getObject<Partial<AboutPageContent>>({ endpoint: "about" }).catch(() => null);
+  type LegacyAboutFields = {
+    s1_title_en?: string;
+    s1_title_jp?: string;
+    s1_body_en?: string;
+    s1_body_jp?: string;
+    s2_title_en?: string;
+    s2_title_jp?: string;
+    s2_body_en?: string;
+    s2_body_jp?: string;
+    section1_title_en?: string;
+    section1_title_jp?: string;
+    section1_body_en?: string;
+    section1_body_jp?: string;
+    section2_title_en?: string;
+    section2_title_jp?: string;
+    section2_body_en?: string;
+    section2_body_jp?: string;
+  };
+
+  type AboutApiData = Partial<AboutPageContent> & LegacyAboutFields;
+
+  const data = await client.getObject<AboutApiData>({ endpoint: "about" }).catch(() => null);
   if (!data) return fallbackContent;
 
   return {
     title_en: data.title_en || fallbackContent.title_en,
     title_jp: data.title_jp || fallbackContent.title_jp,
-    story_title_en: data.story_title_en || fallbackContent.story_title_en,
-    story_title_jp: data.story_title_jp || fallbackContent.story_title_jp,
-    story_body_en: data.story_body_en || fallbackContent.story_body_en,
-    story_body_jp: data.story_body_jp || fallbackContent.story_body_jp,
-    profile_title_en: data.profile_title_en || fallbackContent.profile_title_en,
-    profile_title_jp: data.profile_title_jp || fallbackContent.profile_title_jp,
+    story_title_en:
+      data.story_title_en || data.s1_title_en || data.section1_title_en || fallbackContent.story_title_en,
+    story_title_jp:
+      data.story_title_jp || data.s1_title_jp || data.section1_title_jp || fallbackContent.story_title_jp,
+    story_body_en:
+      data.story_body_en || data.s1_body_en || data.section1_body_en || fallbackContent.story_body_en,
+    story_body_jp:
+      data.story_body_jp || data.s1_body_jp || data.section1_body_jp || fallbackContent.story_body_jp,
+    profile_title_en:
+      data.profile_title_en || data.s2_title_en || data.section2_title_en || fallbackContent.profile_title_en,
+    profile_title_jp:
+      data.profile_title_jp || data.s2_title_jp || data.section2_title_jp || fallbackContent.profile_title_jp,
     profile_name_en: data.profile_name_en || fallbackContent.profile_name_en,
     profile_name_jp: data.profile_name_jp || fallbackContent.profile_name_jp,
-    profile_body_en: data.profile_body_en || fallbackContent.profile_body_en,
-    profile_body_jp: data.profile_body_jp || fallbackContent.profile_body_jp,
+    profile_body_en:
+      data.profile_body_en || data.s2_body_en || data.section2_body_en || fallbackContent.profile_body_en,
+    profile_body_jp:
+      data.profile_body_jp || data.s2_body_jp || data.section2_body_jp || fallbackContent.profile_body_jp,
   };
 }
 
