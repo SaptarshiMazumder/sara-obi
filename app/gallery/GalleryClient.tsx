@@ -8,11 +8,14 @@ import { useLanguage } from "../context/LanguageContext"; // 👈 1. Import Glob
 type GalleryItem = {
   id: string;
   title: string;
+  title_jp?: string;
   image: { url: string; height: number; width: number };
   category: string[];
   price: string;
+  price_jp?: string;
   etsy_link?: string;
   description: string;
+  description_jp?: string;
 };
 
 // --- TRANSLATIONS (Kept exactly as yours) ---
@@ -25,7 +28,7 @@ const UI_LABELS = {
       etsy_btn: "SARA OBI Etsyショップを見る" 
     },
     filter: { all: "すべて" },
-    grid: { viewEtsy: "Etsyで見る" },
+    grid: { viewDetails: "詳細を見る" },
     custom: {
       title: "カスタムオーダーについて",
       step1_title: "お問い合わせ",
@@ -58,7 +61,7 @@ const UI_LABELS = {
       etsy_btn: "Visit SARA OBI on Etsy" 
     },
     filter: { all: "ALL" },
-    grid: { viewEtsy: "View on Etsy" },
+    grid: { viewDetails: "View details" },
     custom: {
       title: "Bespoke & Custom Orders",
       step1_title: "Inquire",
@@ -92,6 +95,10 @@ export default function GalleryClient({ items }: { items: GalleryItem[] }) {
 
   const [filter, setFilter] = useState("ALL");
   const ui = UI_LABELS[lang];
+  const getLocalizedTitle = (item: GalleryItem) =>
+    (lang === "JP" ? item.title_jp : undefined) || item.title;
+  const getLocalizedPrice = (item: GalleryItem) =>
+    (lang === "JP" ? item.price_jp : undefined) || item.price;
 
   // const toggleLang = () => setLang((prev) => (prev === "EN" ? "JP" : "EN")); <-- DELETED THIS (handled by hook)
 
@@ -148,37 +155,35 @@ export default function GalleryClient({ items }: { items: GalleryItem[] }) {
         {filteredItems.length === 0 ? (
            <div className="text-center py-20 bg-stone-100 text-stone-400 font-sans tracking-widest">
              <p>No items found.</p>
-             <p className="text-xs mt-2 opacity-50">(Please add content to MicroCMS 'gallery' API)</p>
+             <p className="text-xs mt-2 opacity-50">(Please add content to MicroCMS &apos;gallery&apos; API)</p>
            </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
             {filteredItems.map((item) => (
-              <div key={item.id} className="group flex flex-col items-start animate-fade-in">
-                <div className="relative w-full aspect-[3/4] overflow-hidden bg-stone-200 mb-6 cursor-pointer shadow-sm">
-                  {item.etsy_link ? (
-                    <a href={item.etsy_link} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
-                      {item.image?.url ? (
-                        <img 
-                          src={item.image.url} 
-                          alt={item.title} 
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-stone-400 text-xs">NO IMAGE</div>
-                      )}
-                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-                        <span className="bg-white text-black px-6 py-2 text-[10px] tracking-widest uppercase shadow-md">
-                          {ui.grid.viewEtsy}
-                        </span>
-                      </div>
-                    </a>
+              <Link
+                key={item.id}
+                href={`/gallery/${item.id}`}
+                className="group flex flex-col items-start animate-fade-in"
+              >
+                <div className="relative w-full aspect-3/4 overflow-hidden bg-stone-200 mb-6 cursor-pointer shadow-sm">
+                  {item.image?.url ? (
+                    <img
+                      src={item.image.url}
+                      alt={getLocalizedTitle(item)}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
                   ) : (
-                    <img src={item.image?.url} alt={item.title} className="w-full h-full object-cover" />
+                    <div className="w-full h-full flex items-center justify-center text-stone-400 text-xs">NO IMAGE</div>
                   )}
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                    <span className="bg-white text-black px-6 py-2 text-[10px] tracking-widest uppercase shadow-md">
+                      {ui.grid.viewDetails}
+                    </span>
+                  </div>
                 </div>
                 <div className="w-full flex justify-between items-baseline mb-2">
-                  <h3 className="text-xl font-light font-serif">{item.title}</h3>
-                  <span className="text-sm font-sans text-[#C5A059] font-medium">{item.price}</span>
+                  <h3 className="text-xl font-light font-serif">{getLocalizedTitle(item)}</h3>
+                  <span className="text-sm font-sans text-[#C5A059] font-medium">{getLocalizedPrice(item)}</span>
                 </div>
                 <div className="flex gap-2 mb-3">
                   {item.category && item.category.map((cat) => (
@@ -187,7 +192,7 @@ export default function GalleryClient({ items }: { items: GalleryItem[] }) {
                       </span>
                   ))}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

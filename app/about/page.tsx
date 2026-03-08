@@ -1,122 +1,81 @@
-"use client";
+import { client } from "@/libs/client";
+import AboutClient, { type AboutPageContent } from "./AboutClient";
 
-import React from "react";
-import Navbar from "../components/Navbar";
-import { useLanguage } from "../context/LanguageContext"; // 👈 1. Connect to Global Brain
+export const revalidate = 0;
 
-const CONTENT = {
-  JP: {
-    title: "Sara Obi について",
-    storyTitle: "忘れ去られた美を、\n現代のアートへ。",
-    storyBody: `
-      着物は、日本の美意識の結晶です。
-      中でも「帯」は、最も豪華で、最も職人の技が詰まった芸術品と言えます。
+const fallbackContent: AboutPageContent = {
+  title_en: "About Sara Obi",
+  title_jp: "Sara Obi について",
+  story_title_en: "Reviving Forgotten Beauty\ninto Modern Art.",
+  story_title_jp: "忘れ去られた美を、\n現代のアートへ。",
+  story_body_en: `The Kimono is the crystallization of Japanese aesthetics.
+Among them, the "Obi" (sash) is arguably the most luxurious work of art, filled with unparalleled craftsmanship.
 
-      しかし、現代のライフスタイルの変化により、
-      多くの帯が箪笥の中で眠ったまま、あるいは廃棄されています。
+However, due to changes in modern lifestyles,
+countless Obis lie dormant in chests or are tragically discarded.
 
-      Sara Obiは、そんなヴィンテージの帯を「タペストリー」として再構築します。
-      ハサミを入れることなく、帯本来の美しさをそのままに。
+Sara Obi reconstructs these vintage Obis into "Tapestries."
+We do this without cutting the fabric, preserving the original beauty of the weave.
 
-      それは単なるインテリアではなく、
-      時代を超えて受け継がれる、歴史の断片です。
-    `,
-    profileTitle: "アーティスト",
-    profileName: "サラ",
-    profileBody: `
-      東京生まれ。
-      幼少期より祖母の着物コレクションに触れて育つ。
-      
-      ファッション業界での経験を経て、
-      廃棄される着物や帯の現実に直面し、
-      2024年よりアップサイクルプロジェクト「Sara Obi」を開始。
-      
-      「帯をほどかず、傷つけず、飾る」という独自の技法で、
-      ヴィンテージ帯に新たな命を吹き込んでいる。
-    `,
-    footer: "© 2026 Sara Obi. Powered by Vercel"
-  },
-  EN: {
-    title: "About Sara Obi",
-    storyTitle: "Reviving Forgotten Beauty\ninto Modern Art.",
-    storyBody: `
-      The Kimono is the crystallization of Japanese aesthetics.
-      Among them, the "Obi" (sash) is arguably the most luxurious work of art, filled with unparalleled craftsmanship.
+These are not just interior decorations;
+they are fragments of history, passed down through generations.`,
+  story_body_jp: `着物は、日本の美意識の結晶です。
+中でも「帯」は、最も豪華で、最も職人の技が詰まった芸術品と言えます。
 
-      However, due to changes in modern lifestyles,
-      countless Obis lie dormant in chests or are tragically discarded.
+しかし、現代のライフスタイルの変化により、
+多くの帯が箪笥の中で眠ったまま、あるいは廃棄されています。
 
-      Sara Obi reconstructs these vintage Obis into "Tapestries."
-      We do this without cutting the fabric, preserving the original beauty of the weave.
+Sara Obiは、そんなヴィンテージの帯を「タペストリー」として再構築します。
+ハサミを入れることなく、帯本来の美しさをそのままに。
 
-      These are not just interior decorations;
-      they are fragments of history, passed down through generations.
-    `,
-    profileTitle: "The Artist",
-    profileName: "Sara",
-    profileBody: `
-      Born in Tokyo.
-      Grew up surrounded by her grandmother's Kimono collection.
-      
-      After working in the fashion industry and witnessing the reality of discarded textiles,
-      she launched the upcycling project "Sara Obi" in 2024.
-      
-      Using a unique technique of "displaying without cutting or damaging,"
-      she breathes new life into vintage Obis as contemporary art.
-    `,
-    footer: "© 2026 Sara Obi. Powered by Vercel"
-  }
+それは単なるインテリアではなく、
+時代を超えて受け継がれる、歴史の断片です。`,
+  profile_title_en: "The Artist",
+  profile_title_jp: "アーティスト",
+  profile_name_en: "Sara",
+  profile_name_jp: "サラ",
+  profile_body_en: `Born in Tokyo.
+Grew up surrounded by her grandmother's Kimono collection.
+
+After working in the fashion industry and witnessing the reality of discarded textiles,
+she launched the upcycling project "Sara Obi" in 2024.
+
+Using a unique technique of "displaying without cutting or damaging,"
+she breathes new life into vintage Obis as contemporary art.`,
+  profile_body_jp: `東京生まれ。
+幼少期より祖母の着物コレクションに触れて育つ。
+
+ファッション業界での経験を経て、
+廃棄される着物や帯の現実に直面し、
+2024年よりアップサイクルプロジェクト「Sara Obi」を開始。
+
+「帯をほどかず、傷つけず、飾る」という独自の技法で、
+ヴィンテージ帯に新たな命を吹き込んでいる。`,
 };
 
-export default function AboutPage() {
-  // 👇 2. Use the Global Hook instead of useState
-  const { lang, toggleLang } = useLanguage();
-  
-  const t = CONTENT[lang];
+async function getAboutContent(): Promise<AboutPageContent> {
+  if (!client) return fallbackContent;
 
-  return (
-    <div className={`min-h-screen bg-[#F9F8F4] font-serif text-[#2C2C2C] selection:bg-[#C5A059] selection:text-white ${lang === "JP" ? "font-sans-jp" : ""}`}>
-      
-      <Navbar lang={lang} toggleLang={toggleLang} />
+  const data = await client.getObject<Partial<AboutPageContent>>({ endpoint: "about" }).catch(() => null);
+  if (!data) return fallbackContent;
 
-      {/* HEADER */}
-      <header className="pt-40 pb-20 px-6 text-center animate-fade-in-up">
-        <h1 className="text-4xl md:text-5xl font-light tracking-widest mb-6">{t.title}</h1>
-        <div className="w-12 h-[1px] bg-[#C5A059] mx-auto"></div>
-      </header>
+  return {
+    title_en: data.title_en || fallbackContent.title_en,
+    title_jp: data.title_jp || fallbackContent.title_jp,
+    story_title_en: data.story_title_en || fallbackContent.story_title_en,
+    story_title_jp: data.story_title_jp || fallbackContent.story_title_jp,
+    story_body_en: data.story_body_en || fallbackContent.story_body_en,
+    story_body_jp: data.story_body_jp || fallbackContent.story_body_jp,
+    profile_title_en: data.profile_title_en || fallbackContent.profile_title_en,
+    profile_title_jp: data.profile_title_jp || fallbackContent.profile_title_jp,
+    profile_name_en: data.profile_name_en || fallbackContent.profile_name_en,
+    profile_name_jp: data.profile_name_jp || fallbackContent.profile_name_jp,
+    profile_body_en: data.profile_body_en || fallbackContent.profile_body_en,
+    profile_body_jp: data.profile_body_jp || fallbackContent.profile_body_jp,
+  };
+}
 
-      {/* STORY SECTION */}
-      <main className="max-w-3xl mx-auto px-6 pb-32">
-        <section className="mb-32 text-center">
-          <h2 className="text-2xl md:text-3xl font-serif mb-10 leading-relaxed whitespace-pre-line">
-            {t.storyTitle}
-          </h2>
-          <p className="text-sm md:text-base leading-8 text-stone-600 font-sans font-light whitespace-pre-wrap">
-            {t.storyBody}
-          </p>
-        </section>
-
-        {/* IMAGE BREAK (Optional placeholder if you have a profile pic later) */}
-        {/* <div className="w-full h-64 bg-stone-200 mb-32 grayscale opacity-50"></div> */}
-
-        {/* PROFILE SECTION */}
-        <section className="text-center bg-white p-12 border border-stone-100 shadow-sm">
-          <span className="block text-xs font-sans tracking-[0.3em] text-[#C5A059] mb-6 uppercase">
-            {t.profileTitle}
-          </span>
-          <h3 className="text-xl md:text-2xl font-serif mb-6">
-            {t.profileName}
-          </h3>
-          <p className="text-sm md:text-base leading-8 text-stone-600 font-sans font-light whitespace-pre-wrap">
-            {t.profileBody}
-          </p>
-        </section>
-      </main>
-
-      {/* FOOTER */}
-      <footer className="bg-black text-white py-12 px-8 text-center text-[10px] font-sans tracking-widest uppercase">
-        <p>{t.footer}</p>
-      </footer>
-    </div>
-  );
+export default async function AboutPage() {
+  const content = await getAboutContent();
+  return <AboutClient content={content} />;
 }

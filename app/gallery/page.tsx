@@ -6,11 +6,14 @@ import GalleryClient from "./GalleryClient"; // Import the client component
 type GalleryItem = {
   id: string;
   title: string;
+  title_jp?: string;
   image: { url: string; height: number; width: number };
   category: string[];
   price: string;
+  price_jp?: string;
   etsy_link?: string;
   description: string;
+  description_jp?: string;
 };
 
 // --- FETCH DATA ---

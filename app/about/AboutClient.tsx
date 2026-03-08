@@ -1,75 +1,74 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Navbar from "../components/Navbar";
+import { useLanguage } from "../context/LanguageContext";
 
-// Define the shape of the data passed from the server
-type AboutContent = {
-  image: string;
-  s1_title_jp: string;
-  s1_body_jp: string;
-  s1_title_en: string;
-  s1_body_en: string;
-  s2_title_jp: string;
-  s2_body_jp: string;
-  s2_title_en: string;
-  s2_body_en: string;
+export type AboutPageContent = {
+  title_en: string;
+  title_jp: string;
+  story_title_en: string;
+  story_title_jp: string;
+  story_body_en: string;
+  story_body_jp: string;
+  profile_title_en: string;
+  profile_title_jp: string;
+  profile_name_en: string;
+  profile_name_jp: string;
+  profile_body_en: string;
+  profile_body_jp: string;
 };
 
-export default function AboutClient({ content }: { content: AboutContent }) {
-  const [lang, setLang] = useState<"JP" | "EN">("EN");
-  const toggleLang = () => setLang((prev) => (prev === "EN" ? "JP" : "EN"));
+export default function AboutClient({ content }: { content: AboutPageContent }) {
+  const { lang, toggleLang } = useLanguage();
 
-  const s1_title = lang === "EN" ? content.s1_title_en : content.s1_title_jp;
-  const s1_body = lang === "EN" ? content.s1_body_en : content.s1_body_jp;
-  
-  const s2_title = lang === "EN" ? content.s2_title_en : content.s2_title_jp;
-  const s2_body = lang === "EN" ? content.s2_body_en : content.s2_body_jp;
+  const localized = {
+    title: lang === "EN" ? content.title_en : content.title_jp,
+    storyTitle: lang === "EN" ? content.story_title_en : content.story_title_jp,
+    storyBody: lang === "EN" ? content.story_body_en : content.story_body_jp,
+    profileTitle: lang === "EN" ? content.profile_title_en : content.profile_title_jp,
+    profileName: lang === "EN" ? content.profile_name_en : content.profile_name_jp,
+    profileBody: lang === "EN" ? content.profile_body_en : content.profile_body_jp,
+    footer: "© 2026 Sara Obi. Powered by Vercel",
+  };
 
   return (
     <div className={`min-h-screen bg-[#F9F8F4] font-serif text-[#2C2C2C] selection:bg-[#C5A059] selection:text-white ${lang === "JP" ? "font-sans-jp" : ""}`}>
       <Navbar lang={lang} toggleLang={toggleLang} />
 
-      {/* --- HEADER --- */}
-      <header className="pt-40 pb-20 px-6 text-center max-w-3xl mx-auto animate-fade-in-up">
-        <span className="block text-[10px] font-sans tracking-[0.3em] text-[#C5A059] mb-6 uppercase">
-          {lang === "EN" ? "About" : "紹介"}
-        </span>
-        <h1 className="text-4xl md:text-5xl font-light mb-12 min-h-[3rem]">
-          {s1_title}
-        </h1>
-        <p className="text-base md:text-lg leading-9 text-stone-600 font-light whitespace-pre-wrap">
-          {s1_body}
-        </p>
+      {/* HEADER */}
+      <header className="pt-40 pb-20 px-6 text-center animate-fade-in-up">
+        <h1 className="text-4xl md:text-5xl font-light tracking-widest mb-6">{localized.title}</h1>
+        <div className="w-12 h-px bg-[#C5A059] mx-auto"></div>
       </header>
 
-      {/* --- IMAGE --- */}
-      <section className="w-full h-[60vh] bg-stone-200 overflow-hidden relative mb-24">
-        {content.image ? (
-          <img 
-            src={content.image} 
-            alt="About"
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-stone-400">
-             {/* If this shows, the image URL from MicroCMS is empty */}
-          </div>
-        )}
-      </section>
+      {/* STORY SECTION */}
+      <main className="max-w-3xl mx-auto px-6 pb-32">
+        <section className="mb-32 text-center">
+          <h2 className="text-2xl md:text-3xl font-serif mb-10 leading-relaxed whitespace-pre-line">
+            {localized.storyTitle}
+          </h2>
+          <p className="text-sm md:text-base leading-8 text-stone-600 font-sans font-light whitespace-pre-wrap">
+            {localized.storyBody}
+          </p>
+        </section>
 
-      {/* --- SECTION 2 --- */}
-      <section className="max-w-2xl mx-auto px-6 pb-32 text-center">
-        <h2 className="text-2xl font-light mb-8 min-h-[2rem]">
-          {s2_title}
-        </h2>
-        <p className="text-sm md:text-base leading-8 text-stone-600 font-sans whitespace-pre-wrap">
-          {s2_body}
-        </p>
-      </section>
+        {/* PROFILE SECTION */}
+        <section className="text-center bg-white p-12 border border-stone-100 shadow-sm">
+          <span className="block text-xs font-sans tracking-[0.3em] text-[#C5A059] mb-6 uppercase">
+            {localized.profileTitle}
+          </span>
+          <h3 className="text-xl md:text-2xl font-serif mb-6">
+            {localized.profileName}
+          </h3>
+          <p className="text-sm md:text-base leading-8 text-stone-600 font-sans font-light whitespace-pre-wrap">
+            {localized.profileBody}
+          </p>
+        </section>
+      </main>
 
       <footer className="bg-black text-white py-12 px-8 text-center text-[10px] font-sans tracking-widest uppercase">
-        <p>© 2026 Sara Obi. Powered by Vercel</p>
+        <p>{localized.footer}</p>
       </footer>
     </div>
   );
